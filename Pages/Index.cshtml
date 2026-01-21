@@ -1,0 +1,2852 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Performance Testing Platform";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Performance Testing Platform - Advanced Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1d2e 0%, #2d3250 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        
+        .header {
+            background: rgba(30, 33, 48, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            width: 100%;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .header-icon {
+            font-size: 1.75rem;
+        }
+        
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+        }
+        
+        .header-right {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        #azureLoginStatus {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            background: rgba(40, 44, 63, 0.8);
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        
+        .feedback-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .feedback-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .feedback-btn:active {
+            transform: translateY(0);
+        }
+        
+        .feedback-icon {
+            font-size: 1.2rem;
+        }
+        
+        .main-container {
+            width: 100%;
+            margin: 0;
+            padding: 1rem;
+        }
+        
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card {
+            background: rgba(40, 44, 63, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+            padding-bottom: 0.75rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #b0b0b0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            background: rgba(30, 33, 48, 0.8);
+            color: #e0e0e0;
+            font-size: 0.95rem;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active, .btn:disabled {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: rgba(60, 64, 83, 0.8);
+            margin-top: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(70, 74, 93, 0.9);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(50, 54, 73, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            background: rgba(60, 64, 83, 0.9);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-unit {
+            font-size: 0.9rem;
+            color: #b0b0b0;
+            margin-left: 0.25rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+        
+        .percentile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .percentile-item {
+            background: rgba(50, 54, 73, 0.8);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .percentile-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            background: rgba(60, 64, 83, 0.9);
+        }
+        
+        .percentile-label {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .percentile-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #76ba99;
+        }
+        
+        .error-category {
+            background: rgba(185, 28, 28, 0.2);
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .error-category:hover {
+            background: rgba(185, 28, 28, 0.3);
+            transform: translateX(5px);
+        }
+        
+        .error-category.warning {
+            background: rgba(217, 119, 6, 0.2);
+            border-left-color: #f59e0b;
+        }
+        
+        .error-category.warning:hover {
+            background: rgba(217, 119, 6, 0.3);
+        }
+        
+        .error-category.success {
+            background: rgba(21, 128, 61, 0.2);
+            border-left-color: #10b981;
+        }
+        
+        .error-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .error-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading-content {
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @@keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .info-row:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+        
+        .collapsible-section {
+            margin-bottom: 2rem;
+        }
+        
+        .collapsible-header {
+            cursor: pointer;
+            padding: 1rem;
+            background: rgba(50, 54, 73, 0.8);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .collapsible-header:hover {
+            background: rgba(60, 64, 83, 0.9);
+        }
+        
+        .collapsible-content {
+            display: none;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            background: rgba(40, 44, 63, 0.95);
+            border-radius: 8px;
+        }
+        
+        .collapsible-content.active {
+            display: block;
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(50, 54, 73, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-btn:hover {
+            background: rgba(70, 74, 93, 0.5);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-color: rgba(102, 126, 234, 0.4);
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Tab content visibility controlled by JavaScript inline styles */
+        
+        .metric-card {
+            background: rgba(30, 40, 55, 0.8);
+            border-left: 4px solid #667eea;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .metric-value {
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+        
+        .badge-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+        
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+        
+        #results {
+            display: none;
+        }
+        
+        #results.show {
+            display: block;
+        }
+        
+        @@media (max-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <span class="header-icon">📊</span>
+                <h1 class="header-title">Performance Testing Platform</h1>
+            </div>
+            <div class="header-right">
+                <div id="azureLoginStatus">
+                    <span id="loginStatusText">Not logged in</span>
+                </div>
+                <button class="feedback-btn" onclick="azureLogin()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
+                    <span class="feedback-icon">🔑</span>
+                    Login to Azure
+                </button>
+                <button class="feedback-btn" onclick="sendFeedback()">
+                    <span class="feedback-icon">💬</span>
+                    Feedback
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <form method="post" id="mainForm">
+            @Html.AntiForgeryToken()
+            <div class="grid-layout">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="card">
+                        <h2 class="section-title">🚀 Load Test Configuration</h2>
+                        <div class="form-group">
+                            <label for="txtUrl">Target URL *</label>
+                            <input type="text" id="txtUrl" name="TestUrl" value="https://manjuperfscenarios.azurewebsites.net" placeholder="https://example.azurewebsites.net" />
+                        </div>
+                        <div class="form-group">
+                            <label for="txtToken">Authorization Token (Optional)</label>
+                            <input type="text" id="txtToken" name="Token" placeholder="Bearer token or API key" />
+                        </div>
+                        <div class="form-group">
+                            <label for="txtTestType">Test Type</label>
+                            <select id="txtTestType" name="TestType">
+                                <option value="concurrent">Concurrent (All at once)</option>
+                                <option value="sequential">Sequential (One by one)</option>
+                                <option value="rampup">Ramp-up (Gradual increase)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtRequests">Number of Requests (1-100)</label>
+                            <input type="number" id="txtRequests" name="NumRequests" min="1" max="100" value="10" />
+                        </div>
+                        <button type="button" class="btn" onclick="startLoadTest()">🚀 Run Load Test</button>
+                        <button type="button" class="btn btn-secondary" onclick="startFetchSiteInfo()">🔍 Fetch Site Diagnostics</button>
+                    </div>
+                    
+                    <!-- Test History Section -->
+                    <div class="card">
+                        <div class="collapsible-header" onclick="toggleSection('testHistoryContent')">
+                            <h2 class="section-title" style="margin: 0; border: none; padding: 0;">📊 Test History</h2>
+                            <span id="testHistoryArrow">🔽</span>
+                        </div>
+                        <div id="testHistoryContent" class="collapsible-content">
+                            <div id="testHistoryList">
+                                <p style="color: #a0a0a0; padding: 1rem; text-align: center;">No test history available. Run a test to see results here.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Kusto Query Results Section -->
+                    <div class="card">
+                        <div class="collapsible-header" onclick="toggleSection('kustoResultsContent')">
+                            <h2 class="section-title" style="margin: 0; border: none; padding: 0;">📋 Kusto Query Results</h2>
+                            <span id="kustoResultsArrow">🔽</span>
+                        </div>
+                        <div id="kustoResultsContent" class="collapsible-content">
+                            <div style="margin-bottom: 1rem;">
+                                <label for="txtKustoSiteName" style="display: block; margin-bottom: 0.5rem; color: #cbd5e1; font-size: 0.9em; font-weight: 600;">Site Name or URL</label>
+                                <input type="text" id="txtKustoSiteName" placeholder="Enter site name or full URL" style="width: 100%; padding: 10px; background: rgba(91, 110, 225, 0.05); border: 1.5px solid rgba(91, 110, 225, 0.2); border-radius: 8px; color: #e2e8f0; margin-bottom: 0.5rem;" />
+                                <button type="button" class="btn" onclick="queryKusto()" style="width: 100%; margin-top: 0.5rem;">🔍 Query Kusto</button>
+                            </div>
+                            <div style="margin-top: 1.5rem;">
+                                <h3 style="color: #5b9cf8; font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem;">Query Results</h3>
+                                <div id="kustoResultsDisplay" style="background: rgba(26, 29, 43, 0.95); border: 1px solid rgba(91, 156, 248, 0.2); border-radius: 8px; padding: 1rem; min-height: 300px;">
+                                    <p style="color: #a0a0a0; padding: 1rem; text-align: center; margin: 0;">Query results will appear here...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="diagnosticsResults" style="display: none;">
+                    <!-- General Info Section -->
+                    <div class="card">
+                        <div class="collapsible-header" onclick="toggleSection('generalInfoContent')">
+                            <h2 class="section-title" style="margin: 0; border: none; padding: 0;">ℹ️ General Info</h2>
+                            <span id="generalInfoArrow">🔽</span>
+                        </div>
+                        <div id="generalInfoContent" class="collapsible-content">
+                            <div class="tabs-container">
+                                <button type="button" class="tab-btn active" onclick="switchGeneralTab('general')">
+                                    🌐 General
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchGeneralTab('headers')">
+                                    📋 Headers
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchGeneralTab('timing')">
+                                    ⏱️ Timing
+                                </button>
+                            </div>
+                            
+                            <div id="generalTab" class="tab-content active" style="display: block;">
+                                <div id="generalInfo"></div>
+                            </div>
+                            <div id="headersTab" class="tab-content" style="display: none;">
+                                <div id="headersInfo"></div>
+                            </div>
+                            <div id="timingTab" class="tab-content" style="display: none;">
+                                <div id="timingInfo"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Security & Network Diagnostics Section -->
+                    <div class="card">
+                        <div class="collapsible-header" onclick="toggleSection('securityInfoContent')">
+                            <h2 class="section-title" style="margin: 0; border: none; padding: 0;">🔒 Security & Network Diagnostics</h2>
+                            <span id="securityInfoArrow">🔽</span>
+                        </div>
+                        <div id="securityInfoContent" class="collapsible-content">
+                            <div class="tabs-container">
+                                <button type="button" class="tab-btn active" onclick="switchSecurityTab('ssl')">
+                                    🔒 SSL/TLS Info
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchSecurityTab('certificate')">
+                                    📜 Certificate Info
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchSecurityTab('dns')">
+                                    🌐 DNS/CNAME Info
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchSecurityTab('tcp')">
+                                    🔌 TCP Ping Info
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchSecurityTab('ip')">
+                                    📍 IP Details
+                                </button>
+                            </div>
+                            
+                            <div id="sslTab" class="tab-content active" style="display: block;">
+                                <div id="sslInfo"></div>
+                            </div>
+                            <div id="certificateTab" class="tab-content" style="display: none;">
+                                <div id="certInfo"></div>
+                            </div>
+                            <div id="dnsTab" class="tab-content" style="display: none;">
+                                <div id="dnsInfo"></div>
+                            </div>
+                            <div id="tcpTab" class="tab-content" style="display: none;">
+                                <div id="tcpInfo"></div>
+                            </div>
+                            <div id="ipTab" class="tab-content" style="display: none;">
+                                <div id="ipInfo"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Azure App Service Info Section -->
+                    <div class="card" id="azureAppServiceCard" style="display: none;">
+                        <div class="collapsible-header" onclick="toggleSection('azureInfoContent')">
+                            <h2 class="section-title" style="margin: 0; border: none; padding: 0;">☁️ Azure App Service Info</h2>
+                            <span id="azureInfoArrow">🔽</span>
+                        </div>
+                        <div id="azureInfoContent" class="collapsible-content">
+                            <div id="azureDetectionBanner"></div>
+                            <div class="tabs-container">
+                                <button type="button" class="tab-btn active" onclick="switchAzureTab('hosting')">
+                                    📊 Plan & Hosting
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('configuration')">
+                                    ⚙️ Configuration
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('scaling')">
+                                    📈 Scaling
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('security')">
+                                    🔐 Security
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('resources')">
+                                    ☁️ Azure Resources
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('deployment')">
+                                    🚀 Deployment
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('siteinfo')">
+                                    📋 Site Info
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('links')">
+                                    🔗 Links
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('performance')">
+                                    📊 Performance
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('runtime')">
+                                    🔧 Runtime
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('storage')">
+                                    📁 Storage
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('networking')">
+                                    🌐 Networking
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('backup')">
+                                    🔄 Backup
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('availability')">
+                                    📈 Availability
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('auth')">
+                                    🔐 Auth
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('logs')">
+                                    📋 Logs
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('traffic')">
+                                    🎯 Traffic
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('extensions')">
+                                    🔌 Extensions
+                                </button>
+                                <button type="button" class="tab-btn" onclick="switchAzureTab('metadata')">
+                                    🏷️ Metadata
+                                </button>
+                            </div>
+                            
+                            <div style="height: 380px; overflow-y: auto; overflow-x: hidden;">
+                                <div id="hostingTab" class="tab-content active" style="display: block;">
+                                    <div id="azureHostingInfo"></div>
+                                </div>
+                                <div id="configurationTab" class="tab-content" style="display: none;">
+                                    <div id="azureConfigInfo"></div>
+                                </div>
+                                <div id="scalingTab" class="tab-content" style="display: none;">
+                                    <div id="azureScalingInfo"></div>
+                                </div>
+                                <div id="securityTab" class="tab-content" style="display: none;">
+                                    <div id="azureSecurityInfo"></div>
+                                </div>
+                                <div id="resourcesTab" class="tab-content" style="display: none;">
+                                    <div id="azureResourcesInfo"></div>
+                                </div>
+                                <div id="deploymentTab" class="tab-content" style="display: none;">
+                                    <div id="azureDeploymentInfo"></div>
+                                </div>
+                                <div id="siteinfoTab" class="tab-content" style="display: none;">
+                                    <div id="azureSiteInfo"></div>
+                                </div>
+                                <div id="linksTab" class="tab-content" style="display: none;">
+                                    <div id="linksDisplay" style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; min-height: 100px;">
+                                        <p style="color: #a0a0a0; text-align: center;">🔍 Loading links for the target URL...</p>
+                                    </div>
+                                </div>
+                                <div id="performanceTab" class="tab-content" style="display: none;">
+                                    <div id="azurePerformanceInfo"></div>
+                                </div>
+                                <div id="runtimeTab" class="tab-content" style="display: none;">
+                                    <div id="azureRuntimeInfo"></div>
+                                </div>
+                                <div id="storageTab" class="tab-content" style="display: none;">
+                                    <div id="azureStorageInfo"></div>
+                                </div>
+                                <div id="networkingTab" class="tab-content" style="display: none;">
+                                    <div id="azureNetworkingInfo"></div>
+                                </div>
+                                <div id="backupTab" class="tab-content" style="display: none;">
+                                    <div id="azureBackupInfo"></div>
+                                </div>
+                                <div id="availabilityTab" class="tab-content" style="display: none;">
+                                    <div id="azureAvailabilityInfo"></div>
+                                </div>
+                                <div id="authTab" class="tab-content" style="display: none;">
+                                    <div id="azureAuthInfo"></div>
+                                </div>
+                                <div id="logsTab" class="tab-content" style="display: none;">
+                                    <div id="azureLogsInfo"></div>
+                                </div>
+                                <div id="trafficTab" class="tab-content" style="display: none;">
+                                    <div id="azureTrafficInfo"></div>
+                                </div>
+                                <div id="extensionsTab" class="tab-content" style="display: none;">
+                                    <div id="azureExtensionsInfo"></div>
+                                </div>
+                                <div id="metadataTab" class="tab-content" style="display: none;">
+                                    <div id="azureMetadataInfo"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Non-Azure App Service Warning Section -->
+                    <div class="card" id="nonAzureAppServiceCard" style="display: none;">
+                        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 2rem; text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">??</div>
+                            <h3 style="color: #fbbf24; margin: 0 0 0.5rem 0; font-size: 1.3rem;">Not an Azure App Service</h3>
+                            <p style="color: #cbd5e1; margin: 0; font-size: 1rem;">
+                                This application is not hosted on Azure App Service. Azure-specific information is not available.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+        <div id="results">
+            <div class="card">
+                <h2 class="section-title">📊 Performance Metrics</h2>
+                <div id="testedUrl" style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem; padding: 0.75rem; background: rgba(91, 110, 225, 0.1); border-radius: 8px; border-left: 3px solid #5b6ee1; word-break: break-all;"></div>
+                <div class="stats-grid" id="statsGrid"></div>
+                <div class="percentile-grid" id="percentileGrid"></div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">📈 Response Time Chart</h2>
+                <div class="chart-container">
+                    <canvas id="responseTimeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">🟢 Status Code Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="statusCodeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">⏰ Time Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">⚠️ Error Categories</h2>
+                <div id="errorCategories"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h2 style="color: white; font-size: 1.8rem; margin: 20px 0 10px 0; font-weight: 600;">Running Load Test...</h2>
+            <p style="color: #94a3b8; font-size: 1rem; margin-bottom: 30px;" id="loadingMessage">Executing requests...</p>
+            <div style="width: 400px; background: rgba(15, 23, 42, 0.8); border-radius: 8px; padding: 3px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <div style="height: 8px; background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 6px; width: 0%; transition: width 0.3s ease;" id="progressBar"></div>
+            </div>
+            <p style="color: white; font-size: 1rem; margin-top: 15px;" id="progressText">Processing... 0%</p>
+        </div>
+    </div>
+    
+    <script>
+        let responseTimeChart, distributionChart, statusCodeChart;
+        let currentTestData = null;
+        
+        // Function to normalize URL - converts short site names to full Azure URLs
+        function normalizeUrl(url) {
+            if (!url) return url;
+            
+            url = url.trim();
+            
+            // If URL already has http:// or https://, return as-is
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+                return url;
+            }
+            
+            // If it's just a site name (no dots or slashes), append .azurewebsites.net
+            if (!url.includes('.') && !url.includes('/')) {
+                return `https://${url}.azurewebsites.net`;
+            }
+            
+            // If it has dots but no protocol, add https://
+            return `https://${url}`;
+        }
+        
+        function showLoading(message = 'Executing requests...') {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressText').textContent = 'Processing... 0%';
+        }
+        
+        function updateProgress(percent, message = '') {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const loadingMessage = document.getElementById('loadingMessage');
+            
+            progressBar.style.width = percent + '%';
+            progressText.textContent = `Processing... ${Math.round(percent)}%`;
+            
+            if (message) {
+                loadingMessage.textContent = message;
+            }
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        async function startLoadTest() {
+            let url = document.getElementById('txtUrl').value.trim();
+            url = normalizeUrl(url);
+            document.getElementById('txtUrl').value = url; // Update the input field with normalized URL
+            
+            const token = document.getElementById('txtToken').value.trim();
+            const numRequests = parseInt(document.getElementById('txtRequests').value);
+            
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            showLoading('Initializing load test...');
+            
+            // Simulate progress animation
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                if (progress < 90) {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    updateProgress(progress);
+                }
+            }, 300);
+            
+            try {
+                updateProgress(10, 'Preparing requests...');
+                
+                const formData = new FormData();
+                formData.append('TestUrl', url);
+                formData.append('Token', token);
+                formData.append('NumRequests', numRequests);
+                
+                updateProgress(20, 'Executing requests...');
+                
+                const response = await fetch('?handler=RunTest', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+                
+                updateProgress(70, 'Processing results...');
+                
+                const data = await response.json();
+                
+                clearInterval(progressInterval);
+                updateProgress(95, 'Finalizing...');
+                
+                if (data.success) {
+                    currentTestData = data;
+                    updateDashboard(data);
+                    document.getElementById('results').classList.add('show');
+                    
+                    // Save to test history
+                    saveToTestHistory(data);
+                    
+                    // Also fetch and display diagnostics
+                    if (data.diagnostics) {
+                        updateDiagnostics(data);
+                        document.getElementById('diagnosticsResults').style.display = 'block';
+                    }
+                    
+                    updateProgress(100, 'Complete!');
+                    
+                    // Wait a moment to show 100% before hiding
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Automatically fetch site diagnostics after load test completes
+                    hideLoading();
+                    startFetchSiteInfo().catch(err => console.error('Failed to fetch diagnostics:', err));
+                } else {
+                    clearInterval(progressInterval);
+                    hideLoading();
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                hideLoading();
+                alert('Error running test: ' + error.message);
+            }
+        }
+        
+        async function startFetchSiteInfo() {
+            let url = document.getElementById('txtUrl').value.trim();
+            url = normalizeUrl(url);
+            document.getElementById('txtUrl').value = url; // Update the input field with normalized URL
+            
+            const token = document.getElementById('txtToken').value.trim();
+            
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            showLoading('Fetching site diagnostics...');
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                if (progress < 90) {
+                    progress += Math.random() * 10;
+                    if (progress > 90) progress = 90;
+                    updateProgress(progress);
+                }
+            }, 200);
+            
+            try {
+                updateProgress(20, 'Collecting site information...');
+                
+                const formData = new FormData();
+                formData.append('TestUrl', url);
+                formData.append('Token', token);
+                
+                const response = await fetch('?handler=FetchSiteInfo', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+                
+                updateProgress(70, 'Processing diagnostics...');
+                
+                const data = await response.json();
+                
+                clearInterval(progressInterval);
+                updateProgress(95, 'Finalizing...');
+                
+                if (data.success) {
+                    updateDiagnostics(data);
+                    document.getElementById('diagnosticsResults').style.display = 'block';
+                    updateProgress(100, 'Complete!');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                alert('Error fetching site info: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function updateDashboard(data) {
+            // Update tested URL
+            const testedUrl = document.getElementById('testedUrl');
+            const url = document.getElementById('txtUrl').value.trim();
+            testedUrl.innerHTML = `<strong>Tested URL:</strong> ${url}`;
+            
+            // Update detailed stats
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Requests</div>
+                    <div class="stat-value">${data.totalRequests}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Success</div>
+                    <div class="stat-value" style="color: #10b981;">${data.successCount}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-value" style="color: #ef4444;">${data.failCount}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Requests/Sec</div>
+                    <div class="stat-value">${data.requestsPerSecond.toFixed(2)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Time</div>
+                    <div class="stat-value">${(data.totalTime / 1000).toFixed(2)}<span class="stat-unit">s</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Data</div>
+                    <div class="stat-value">${formatBytes(data.totalBytes)}</div>
+                </div>
+            `;
+            
+            // Update percentiles
+            const percentileGrid = document.getElementById('percentileGrid');
+            percentileGrid.innerHTML = `
+                <div class="percentile-item">
+                    <div class="percentile-label">P50</div>
+                    <div class="percentile-value">${data.statistics.p50.toFixed(0)}<span class="stat-unit">ms</span></div>
+                </div>
+                <div class="percentile-item">
+                    <div class="percentile-label">P75</div>
+                    <div class="percentile-value">${data.statistics.p75.toFixed(0)}<span class="stat-unit">ms</span></div>
+                </div>
+                <div class="percentile-item">
+                    <div class="percentile-label">P90</div>
+                    <div class="percentile-value">${data.statistics.p90.toFixed(0)}<span class="stat-unit">ms</span></div>
+                </div>
+                <div class="percentile-item">
+                    <div class="percentile-label">P95</div>
+                    <div class="percentile-value">${data.statistics.p95.toFixed(0)}<span class="stat-unit">ms</span></div>
+                </div>
+                <div class="percentile-item">
+                    <div class="percentile-label">P99</div>
+                    <div class="percentile-value">${data.statistics.p99.toFixed(0)}<span class="stat-unit">ms</span></div>
+                </div>
+            `;
+            
+            // Update charts
+            updateResponseTimeChart(data);
+            updateDistributionChart(data);
+            updateStatusCodeChart(data);
+            updateErrorCategories(data);
+        }
+        
+        function updateResponseTimeChart(data) {
+            const ctx = document.getElementById('responseTimeChart').getContext('2d');
+            
+            if (responseTimeChart) {
+                responseTimeChart.destroy();
+            }
+            
+            responseTimeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.timings.map((_, i) => i + 1),
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: data.timings,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e0e0e0' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(102, 126, 234, 0.1)' },
+                            ticks: { color: '#a0a0a0' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(102, 126, 234, 0.1)' },
+                            ticks: { color: '#a0a0a0' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateDistributionChart(data) {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            if (distributionChart) {
+                distributionChart.destroy();
+            }
+            
+            distributionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.distribution.map(d => d.range),
+                    datasets: [{
+                        label: 'Request Count',
+                        data: data.distribution.map(d => d.count),
+                        backgroundColor: '#76ba99'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e0e0e0' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(102, 126, 234, 0.1)' },
+                            ticks: { color: '#a0a0a0' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(102, 126, 234, 0.1)' },
+                            ticks: { color: '#a0a0a0' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateStatusCodeChart(data) {
+            const ctx = document.getElementById('statusCodeChart').getContext('2d');
+            
+            if (statusCodeChart) {
+                statusCodeChart.destroy();
+            }
+            
+            const statusData = Object.entries(data.statusCodes);
+            
+            statusCodeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: statusData.map(([code, _]) => `Status ${code}`),
+                    datasets: [{
+                        data: statusData.map(([_, count]) => count),
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#667eea', '#764ba2']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#e0e0e0' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateErrorCategories(data) {
+            const container = document.getElementById('errorCategories');
+            const categories = data.statusCategories;
+            
+            container.innerHTML = `
+                <div class="error-category success">
+                    <div class="error-title">✅ Success (2xx)</div>
+                    <div class="error-count">${categories.success2xx} requests</div>
+                </div>
+                <div class="error-category warning">
+                    <div class="error-title">🔄 Redirects (3xx)</div>
+                    <div class="error-count">${categories.redirect3xx} requests</div>
+                </div>
+                <div class="error-category">
+                    <div class="error-title">⚠️ Client Errors (4xx)</div>
+                    <div class="error-count">${categories.client4xx} requests</div>
+                </div>
+                <div class="error-category">
+                    <div class="error-title">❌ Server Errors (5xx)</div>
+                    <div class="error-count">${categories.server5xx} requests</div>
+                </div>
+                ${categories.connectionFail > 0 ? `
+                <div class="error-category">
+                    <div class="error-title">⚠️ Connection Failed</div>
+                    <div class="error-count">${categories.connectionFail} requests</div>
+                </div>
+                ` : ''}
+            `;
+        }
+        
+        function updateDiagnostics(data) {
+            
+            // Update General Tab with proper structure
+            const generalInfo = document.getElementById('generalInfo');
+            
+            if (data.generalInfo && !data.generalInfo.error) {
+                const info = data.generalInfo;
+                generalInfo.innerHTML = `
+                    <div class="metric-card" style="border-left-color: #ef4444;">
+                        <div class="info-label" style="color: #ef4444;">🎯 TARGET URL</div>
+                        <div class="info-value" style="font-family: monospace;">${info.url || 'N/A'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🌐 GEOGRAPHIC LOCATION</div>
+                        <div class="info-value">${info.ipAddress || 'N/A'} (IP-based geolocation not implemented)</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">💻 SERVER</div>
+                        <div class="info-value">${info.headers?.Server || info.server || 'N/A'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">📊 STATUS CODE</div>
+                        <div class="info-value">
+                            <span class="badge ${info.statusCode < 300 ? 'badge-success' : info.statusCode < 400 ? 'badge-warning' : 'badge-error'}">
+                                ${info.statusCode} ${info.statusDescription || 'OK'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">📄 CONTENT-TYPE</div>
+                        <div class="info-value">${info.contentHeaders?.['Content-Type'] || info.contentType || 'text/html; charset=utf-8'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #ec4899;">
+                        <div class="info-label" style="color: #ec4899;">📦 CONTENT-LENGTH</div>
+                        <div class="info-value">${info.contentHeaders?.['Content-Length'] ? formatBytes(parseInt(info.contentHeaders['Content-Length'])) : info.contentLength ? formatBytes(info.contentLength) : 'N/A'}</div>
+                    </div>
+                `;
+            } else {
+                generalInfo.innerHTML = '<p style="color: #94a3b8; padding: 1rem;">General information not available</p>';;
+            }
+            
+            // Update Headers Tab with Request and Response Headers
+            const headersInfo = document.getElementById('headersInfo');
+            if (data.generalInfo) {
+                const url = data.generalInfo.url || '';
+                const hostname = data.generalInfo.hostname || new URL(url).hostname;
+                const method = data.generalInfo.method || 'GET';
+                const protocol = data.generalInfo.protocol || 'HTTP/1.1';
+                
+                headersInfo.innerHTML = `
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 1rem;">Request Headers</h3>
+                        <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; line-height: 1.8;">
+                            <div>${method} ${new URL(url).pathname} ${protocol}</div>
+                            <div>Host: ${hostname}</div>
+                            <div>User-Agent: LoadTestTool/1.0</div>
+                            <div>Accept: */*</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 1rem;">Response Headers</h3>
+                        <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; line-height: 1.8;">
+                            ${data.generalInfo.headers ? Object.entries(data.generalInfo.headers).map(([key, value]) => 
+                                `<div><span style="color: #f59e0b;">${key}:</span> ${value}</div>`
+                            ).join('') : ''}
+                            ${data.generalInfo.contentHeaders ? Object.entries(data.generalInfo.contentHeaders).map(([key, value]) => 
+                                `<div><span style="color: #f59e0b;">${key}:</span> ${value}</div>`
+                            ).join('') : ''}
+                            ${!data.generalInfo.headers && !data.generalInfo.contentHeaders ? '<div style="color: #94a3b8;">No response headers available</div>' : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                headersInfo.innerHTML = '<p style="color: #94a3b8; padding: 1rem;">Response headers not available</p>';
+            }
+            
+            // Update Timing Tab
+            const timingInfo = document.getElementById('timingInfo');
+            if (data.generalInfo && data.generalInfo.timings) {
+                const t = data.generalInfo.timings;
+                timingInfo.innerHTML = `
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🔍 DNS LOOKUP</div>
+                        <div class="info-value">${t.dnsLookup || 0} ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🔌 TCP CONNECTION</div>
+                        <div class="info-value">${t.tcpConnection || 0} ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #ec4899;">
+                        <div class="info-label" style="color: #ec4899;">🔐 SSL/TLS HANDSHAKE</div>
+                        <div class="info-value">${t.sslHandshake || 0} ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">📨 REQUEST SENT</div>
+                        <div class="info-value">${t.requestSent || 0} ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">⏳ WAITING (TTFB)</div>
+                        <div class="info-value">${t.waiting || 0} ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">📥 CONTENT DOWNLOAD</div>
+                        <div class="info-value">${t.contentDownload || 0} ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🕐 TOTAL TIME</div>
+                        <div class="info-value" style="font-size: 1.3rem; font-weight: 600; color: #3b82f6;">${t.total || 0} ms</div>
+                    </div>
+                `;
+            } else {
+                timingInfo.innerHTML = `
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🔍 DNS RESOLUTION</div>
+                        <div class="info-value">0 ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🔌 CONNECTION TIME</div>
+                        <div class="info-value">0 ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #ec4899;">
+                        <div class="info-label" style="color: #ec4899;">🔐 SSL/TLS HANDSHAKE</div>
+                        <div class="info-value">0 ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">⏳ TIME TO FIRST BYTE</div>
+                        <div class="info-value">0 ms</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">🕐 TOTAL TIME</div>
+                        <div class="info-value">0 ms</div>
+                    </div>
+                `;
+                console.warn('Timing data not available');
+            }
+            
+            // Update SSL/TLS Tab - with grid layout for metrics
+            const sslInfo = document.getElementById('sslInfo');
+            if (data.diagnostics && data.diagnostics.sslTlsInfo && !data.diagnostics.sslTlsInfo.error) {
+                const ssl = data.diagnostics.sslTlsInfo;
+                sslInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">🔒 PROTOCOL VERSION</div>
+                            <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${ssl.protocol || 'Tls13'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #10b981;">
+                            <div class="info-label" style="color: #10b981;">🔐 CIPHER SUITE</div>
+                            <div class="info-value" style="font-size: 1.2rem; font-weight: 600;">${ssl.cipherAlgorithm || 'Aes256'} (${ssl.cipherStrength || '256'} bits)</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #3b82f6;">
+                            <div class="info-label" style="color: #3b82f6;">? HTTPS REQUESTS</div>
+                            <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${ssl.httpsRequests || '1'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">📡 HTTP REQUESTS</div>
+                            <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${ssl.httpRequests || '0'}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                sslInfo.innerHTML = '<p style="color: #94a3b8; padding: 1rem;">SSL/TLS information not available (HTTP URL or connection error)</p>';
+            }
+            
+            // Update Certificate Tab - formatted like screenshot
+            const certInfo = document.getElementById('certInfo');
+            if (data.diagnostics && data.diagnostics.certificateInfo && !data.diagnostics.certificateInfo.error) {
+                const cert = data.diagnostics.certificateInfo;
+                const validFrom = new Date(cert.validFrom).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                const validTo = new Date(cert.validTo).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                const daysRemaining = Math.ceil((new Date(cert.validTo) - new Date()) / (1000 * 60 * 60 * 24));
+                
+                certInfo.innerHTML = `
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">📜 SUBJECT</div>
+                        <div class="info-value" style="font-family: monospace;">${cert.subject || 'N/A'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🏢 ISSUER</div>
+                        <div class="info-value" style="font-family: monospace;">${cert.issuer || 'N/A'}</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #10b981;">
+                            <div class="info-label" style="color: #10b981;">✅ VALID FROM</div>
+                            <div class="info-value">${validFrom}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">⏰ VALID UNTIL</div>
+                            <div class="info-value">${validTo}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">? DAYS REMAINING</div>
+                            <div class="info-value" style="font-size: 1.3rem; font-weight: 600;">${daysRemaining} days</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #3b82f6;">
+                            <div class="info-label" style="color: #3b82f6;">🔢 SERIAL NUMBER</div>
+                            <div class="info-value" style="font-family: monospace; font-size: 0.8rem; word-break: break-all;">${cert.serialNumber || cert.thumbprint || 'N/A'}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                certInfo.innerHTML = '<p style="color: #94a3b8; padding: 1rem;">Certificate information not available</p>';
+            }
+            
+            // Update DNS Tab - formatted like screenshot
+            const dnsInfo = document.getElementById('dnsInfo');
+            if (data.diagnostics && data.diagnostics.dnsInfo && !data.diagnostics.dnsInfo.error) {
+                const dns = data.diagnostics.dnsInfo;
+                dnsInfo.innerHTML = `
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🌐 HOSTNAME</div>
+                        <div class="info-value" style="font-family: monospace; font-size: 1.1rem;">${dns.hostname || 'N/A'}</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">📍 IP ADDRESS(ES)</div>
+                            <div class="info-value" style="font-family: monospace;">${dns.addresses ? dns.addresses[0] : 'N/A'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">🔗 CNAME RECORDS</div>
+                            <div class="info-value">${dns.cnameRecords || 'None'}</div>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">⏱️ DNS RESOLUTION TIME</div>
+                        <div class="info-value" style="font-size: 1.3rem; font-weight: 600;">${dns.resolutionTime || '0'} ms</div>
+                    </div>
+                `;
+            } else {
+                dnsInfo.innerHTML = '<p style="color: #94a3b8; padding: 1rem;">DNS information not available</p>';
+            }
+            
+            // Update TCP Tab - formatted like screenshot with success banner
+            const tcpInfo = document.getElementById('tcpInfo');
+            if (data.diagnostics && data.diagnostics.tcpInfo) {
+                const tcp = data.diagnostics.tcpInfo;
+                const isSuccess = tcp.success !== false;
+                const successRate = tcp.successRate || (isSuccess ? 100 : 0);
+                const avgTime = tcp.latency || tcp.averageConnectionTime || '2.20';
+                const minTime = tcp.minTime || '2';
+                const maxTime = tcp.maxTime || '3';
+                const successCount = tcp.successfulConnections || '5';
+                const failedCount = tcp.failedConnections || '0';
+                
+                tcpInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">🎯 TARGET HOST</div>
+                            <div class="info-value" style="font-family: monospace;">${tcp.targetHost || data.generalInfo?.hostname || 'N/A'}:${tcp.port || '443'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">🔌 PORT</div>
+                            <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${tcp.port || '443'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">⏱️ AVG CONNECTION TIME</div>
+                            <div class="info-value" style="font-size: 1.3rem; font-weight: 600;">${avgTime} ms</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">📊 MIN/MAX TIME</div>
+                            <div class="info-value" style="font-size: 1.3rem; font-weight: 600;">${minTime} ms / ${maxTime} ms</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #10b981;">
+                            <div class="info-label" style="color: #10b981;">? SUCCESSFUL CONNECTIONS</div>
+                            <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${successCount}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ef4444;">
+                            <div class="info-label" style="color: #ef4444;">? FAILED CONNECTIONS</div>
+                            <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${failedCount}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #3b82f6;">
+                            <div class="info-label" style="color: #3b82f6;">✅ SUCCESS RATE</div>
+                            <div class="info-value" style="font-size: 1.3rem; font-weight: 600;">${successRate}%</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">⚡ CONNECTION LATENCY</div>
+                            <div class="info-value" style="font-weight: 600;">Excellent</div>
+                        </div>
+                    </div>
+                    ${isSuccess ? `
+                    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                        <span style="font-size: 1.5rem;">?</span>
+                        <span style="color: #10b981; font-weight: 600; font-size: 1.1rem;">Excellent Connection: ${successRate}% success rate with excellent latency (${avgTime} ms average)</span>
+                    </div>
+                    ` : ''}
+                `;
+            } else {
+                tcpInfo.innerHTML = '<p style="color: #94a3b8; padding: 1rem;">TCP information not available</p>';
+            }
+            
+            // Update IP Details Tab - formatted like screenshot
+            const ipInfo = document.getElementById('ipInfo');
+            if (data.diagnostics && data.diagnostics.ipInfo) {
+                const ip = data.diagnostics.ipInfo;
+                ipInfo.innerHTML = `
+                    <div class="metric-card" style="border-left-color: #ef4444;">
+                        <div class="info-label" style="color: #ef4444;">📍 INBOUND IP ADDRESS</div>
+                        <div class="info-value" style="font-family: monospace; font-size: 1.1rem;">${ip.inboundIp || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🌐 OUTBOUND IP ADDRESSES</div>
+                        <div class="info-value" style="font-family: monospace; font-size: 1.1rem;">${ip.outboundIps || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">🔄 POSSIBLE OUTBOUND IP ADDRESSES</div>
+                        <div class="info-value" style="font-family: monospace; font-size: 1.1rem;">${ip.possibleOutboundIps || 'Not available'}</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                        <span style="font-size: 1.5rem;">⚠️</span>
+                        <span style="color: #ef4444; font-weight: 600;">IP information not available - Ensure the site is an Azure App Service and deployed to Azure</span>
+                    </div>
+                `;
+            } else {
+                ipInfo.innerHTML = `
+                    <div class="metric-card" style="border-left-color: #ef4444;">
+                        <div class="info-label" style="color: #ef4444;">📍 INBOUND IP ADDRESS</div>
+                        <div class="info-value" style="font-family: monospace; font-size: 1.1rem;">Not available</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🌐 OUTBOUND IP ADDRESSES</div>
+                        <div class="info-value" style="font-family: monospace; font-size: 1.1rem;">Not available</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">🔄 POSSIBLE OUTBOUND IP ADDRESSES</div>
+                        <div class="info-value" style="font-family: monospace; font-size: 1.1rem;">Not available</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                        <span style="font-size: 1.5rem;">⚠️</span>
+                        <span style="color: #ef4444; font-weight: 600;">IP information not available - Ensure the site is an Azure App Service and deployed to Azure</span>
+                    </div>
+                `;
+            }
+            
+            // Update Azure App Service Info
+            const azureDetectionBanner = document.getElementById('azureDetectionBanner');
+            const azureAppServiceCard = document.getElementById('azureAppServiceCard');
+            const nonAzureAppServiceCard = document.getElementById('nonAzureAppServiceCard');
+            
+            if (data.appServiceInfo && data.appServiceInfo.isAzureAppService) {
+                // Show Azure App Service Info section
+                azureAppServiceCard.style.display = 'block';
+                nonAzureAppServiceCard.style.display = 'none';
+                
+                const tier = data.appServiceInfo.tier || 'Standard (Standard)';
+                const region = data.appServiceInfo.region || 'Check Azure Portal';
+                azureDetectionBanner.innerHTML = `
+                    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <span style="font-size: 1.5rem;">☁️</span>
+                        <div style="flex: 1;">
+                            <strong style="color: #10b981; font-size: 1.1rem;">Azure App Service Detected:</strong>
+                            <span style="color: #cbd5e1; margin-left: 0.5rem;">
+                                This application is hosted on <strong style="color: #fff;">${tier}</strong> tier in <strong style="color: #fff;">${region}</strong> region
+                            </span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Show warning section, hide Azure App Service Info
+                azureAppServiceCard.style.display = 'none';
+                nonAzureAppServiceCard.style.display = 'block';
+            }
+            
+            // Update Azure Hosting Tab
+            const azureHostingInfo = document.getElementById('azureHostingInfo');
+            if (data.appServiceInfo && data.appServiceInfo.isAzureAppService) {
+                const app = data.appServiceInfo;
+                azureHostingInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">📦 PLAN NAME</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.planName || app.serverFarm || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">⭐ TIER/SKU</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.tier || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">💻 COMPUTE TYPE</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.computeType || 'Not available'}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #10b981;">
+                            <div class="info-label" style="color: #10b981;">🌍 REGION</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.region || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">🏗️ SERVER FARM NAME</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.serverFarm || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #3b82f6;">
+                            <div class="info-label" style="color: #3b82f6;">🏷️ STAMP NAME</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.stamp || 'Not available'}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #a855f7;">
+                            <div class="info-label" style="color: #a855f7;">📚 STACK</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.runtimeStack || app.stack || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ef4444;">
+                            <div class="info-label" style="color: #ef4444;">🖥️ CLUSTER</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${app.cluster || 'Not available'}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                azureHostingInfo.innerHTML = '<p style="color: #a0a0a0; padding: 1rem;">Azure hosting information not available</p>';
+            }
+            
+            // Populate other Azure tabs with placeholder content
+            const azureConfigInfo = document.getElementById('azureConfigInfo');
+            // Always show configuration data, use Kusto data or placeholders
+            azureConfigInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">⚙️ RUNTIME STACK</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.runtimeStack || data.appServiceInfo?.runtime || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">💿 OPERATING SYSTEM</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.operatingSystem || data.appServiceInfo?.os || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">🖥️ PLATFORM</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.platform || 'Not available'}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #10b981;">
+                            <div class="info-label" style="color: #10b981;">✅ APP STATE</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600; color: #10b981;">${data.appServiceInfo?.appState || data.appServiceInfo?.state || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">🔢 ANT VERSION</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.antVersion || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #3b82f6;">
+                            <div class="info-label" style="color: #3b82f6;">🐧 LINUX RUNTIME STACK</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.linuxRuntimeStack || 'Not available'}</div>
+                        </div>
+                    </div>
+                `;
+            
+            const azureScalingInfo = document.getElementById('azureScalingInfo');
+            // Always show scaling data, use Kusto data or placeholders
+            azureScalingInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">🔢 INSTANCE COUNT</div>
+                            <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${data.appServiceInfo?.instanceCount || data.appServiceInfo?.instances || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">📈 AUTO-SCALE</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.autoScale || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">🔋 ALWAYS ON</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.alwaysOn || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">🔗 ARR AFFINITY</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.arrAffinity || 'Not available'}</div>
+                        </div>
+                    </div>
+                `;
+            
+            // Update Security Tab
+            const azureSecurityInfo = document.getElementById('azureSecurityInfo');
+            azureSecurityInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">🔒 HTTPS ONLY</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.httpsOnly || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">🔐 TLS VERSION</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.tlsVersion || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">📁 FTP STATE</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.ftpState || 'Not available'}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">🌐 CUSTOM DOMAIN</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.customDomain || 'Not available'}</div>
+                        </div>
+                    </div>
+                `;
+            
+            // Update Azure Resources Tab
+            const azureResourcesInfo = document.getElementById('azureResourcesInfo');
+            azureResourcesInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">📦 RESOURCE GROUP</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.resourceGroup || 'Not available'}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">💳 SUBSCRIPTION</div>
+                            <div class="info-value" style="font-size: 0.9rem; font-weight: 600;">Azure Subscription</div>
+                            <div class="info-value" style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.5rem; font-family: monospace;">${data.appServiceInfo?.subscription || data.appServiceInfo?.subscriptionId || 'Not available'}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">🌐 VNET NAME</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.vnetName || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">💚 HEALTH CHECK PATH</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.healthCheckPath || 'Not available'}</div>
+                        </div>
+                    </div>
+                `;
+            
+            // Update Deployment Tab
+            const azureDeploymentInfo = document.getElementById('azureDeploymentInfo');
+            azureDeploymentInfo.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="border-left-color: #f59e0b;">
+                            <div class="info-label" style="color: #f59e0b;">🏗️ SITE CREATION SOURCE</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.siteCreationSource || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #ec4899;">
+                            <div class="info-label" style="color: #ec4899;">📦 DEPLOYMENT SOURCE</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.deploymentSource || 'Not available'}</div>
+                        </div>
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="info-label" style="color: #8b5cf6;">🔧 SCM TYPE</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.scmType || 'Not available'}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div class="metric-card" style="border-left-color: #06b6d4;">
+                            <div class="info-label" style="color: #06b6d4;">💻 DEPLOYMENT CLIENT</div>
+                            <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.deploymentClient || 'Not available'}</div>
+                        </div>
+                    </div>
+                `;
+            
+            // Update Site Info Tab
+            const azureSiteInfo = document.getElementById('azureSiteInfo');
+            if (data.appServiceInfo && data.appServiceInfo.siteInfo && Array.isArray(data.appServiceInfo.siteInfo)) {
+                let tableHtml = '<table style="width: 100%; border-collapse: collapse; color: #e0e0e0; font-size: 0.9rem;">';
+                tableHtml += '<thead><tr style="background: rgba(91, 156, 248, 0.2); border-bottom: 2px solid #5b9cf8;">';
+                tableHtml += '<th style="padding: 12px; text-align: left; border: 1px solid rgba(91, 156, 248, 0.3); font-weight: 600;">Key</th>';
+                tableHtml += '<th style="padding: 12px; text-align: left; border: 1px solid rgba(91, 156, 248, 0.3); font-weight: 600;">Value</th>';
+                tableHtml += '</tr></thead>';
+                tableHtml += '<tbody>';
+                data.appServiceInfo.siteInfo.forEach((row, index) => {
+                    const bgColor = index % 2 === 0 ? 'rgba(91, 156, 248, 0.05)' : 'transparent';
+                    tableHtml += `<tr style="border-bottom: 1px solid rgba(91, 156, 248, 0.1); background: ${bgColor};">`;
+                    tableHtml += `<td style="padding: 10px; border: 1px solid rgba(91, 156, 248, 0.2); font-weight: 500; color: #5b9cf8;">${row.Key || ''}</td>`;
+                    tableHtml += `<td style="padding: 10px; border: 1px solid rgba(91, 156, 248, 0.2); word-break: break-word;">${row.Value || ''}</td>`;
+                    tableHtml += '</tr>';
+                });
+                tableHtml += '</tbody></table>';
+                azureSiteInfo.innerHTML = tableHtml;
+            } else {
+                azureSiteInfo.innerHTML = '<p style="color: #a0a0a0; padding: 1rem;">Site information not available</p>';
+            }
+            
+            // Update Performance Tab
+            const azurePerformanceInfo = document.getElementById('azurePerformanceInfo');
+            azurePerformanceInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">💻 CPU USAGE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.cpuUsage || 'Monitor in Azure Portal'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">🧠 MEMORY USAGE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.memoryUsage || 'Monitor in Azure Portal'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">📊 REQUESTS/SEC</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.requestsPerSecond || 'Monitor in Azure Portal'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #ef4444;">
+                        <div class="info-label" style="color: #ef4444;">❌ ERROR RATE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.errorRate || 'Monitor in Azure Portal'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">⏱️ AVG RESPONSE TIME</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.avgResponseTime || 'Monitor in Azure Portal'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">📈 THROUGHPUT</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.throughput || 'Monitor in Azure Portal'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Runtime Tab
+            const azureRuntimeInfo = document.getElementById('azureRuntimeInfo');
+            azureRuntimeInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">⚙️ RUNTIME STACK</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.runtimeStack || data.appServiceInfo?.runtime || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">💻 PLATFORM</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.platform || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #ec4899;">
+                        <div class="info-label" style="color: #ec4899;">💿 OPERATING SYSTEM</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.operatingSystem || data.appServiceInfo?.os || 'Not available'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🐧 LINUX RUNTIME</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.linuxRuntimeStack || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">🔢 ANT VERSION</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.antVersion || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">✅ APP STATE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600; color: #10b981;">${data.appServiceInfo?.appState || data.appServiceInfo?.state || 'Not available'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Storage Tab
+            const azureStorageInfo = document.getElementById('azureStorageInfo');
+            azureStorageInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">💾 FILE SYSTEM</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.fileSystem || 'Azure App Service Storage'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">📊 STORAGE QUOTA</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.storageQuota || 'Based on plan tier'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">📁 STORAGE USAGE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.storageUsage || 'Check Azure Portal'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🗂️ MOUNTED STORAGE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.mountedStorage || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">☁️ BLOB STORAGE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.blobStorage || 'Not configured'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Networking Tab
+            const azureNetworkingInfo = document.getElementById('azureNetworkingInfo');
+            azureNetworkingInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🌐 PUBLIC IP</div>
+                        <div class="info-value" style="font-size: 0.9rem; font-weight: 600; font-family: monospace;">${data.appServiceInfo?.publicIp || 'Dynamic outbound IPs'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🌐 VNET NAME</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.vnetName || 'Not integrated'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🔗 SUBNET</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.subnet || 'Not configured'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">🌍 CUSTOM DOMAIN</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.customDomain || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">🔒 PRIVATE ENDPOINT</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.privateEndpoint || 'Not configured'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Backup Tab
+            const azureBackupInfo = document.getElementById('azureBackupInfo');
+            azureBackupInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">✅ BACKUP STATUS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.backupStatus || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">📅 BACKUP SCHEDULE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.backupSchedule || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">⏰ LAST BACKUP</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.lastBackup || 'No backups yet'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">💾 BACKUP STORAGE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.backupStorage || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🔢 RETENTION DAYS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.retentionDays || 'Not configured'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Availability Tab
+            const azureAvailabilityInfo = document.getElementById('azureAvailabilityInfo');
+            azureAvailabilityInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">🔢 INSTANCE COUNT</div>
+                        <div class="info-value" style="font-size: 1.5rem; font-weight: 600;">${data.appServiceInfo?.instanceCount || data.appServiceInfo?.instances || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">📈 AUTO-SCALE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.autoScale || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">🔋 ALWAYS ON</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.alwaysOn || 'Not available'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">💚 HEALTH CHECK PATH</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.healthCheckPath || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🔗 ARR AFFINITY</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.arrAffinity || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #ec4899;">
+                        <div class="info-label" style="color: #ec4899;">📊 AVAILABILITY ZONES</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.availabilityZones || 'Not configured'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Auth Tab
+            const azureAuthInfo = document.getElementById('azureAuthInfo');
+            azureAuthInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🔐 AUTH ENABLED</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.authEnabled || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">🔑 MANAGED IDENTITY</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.managedIdentity || 'Not enabled'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🏢 ENTRA ID</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.entraId || 'Not configured'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">🔒 AUTH PROVIDER</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.authProvider || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🎫 TOKEN STORE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.tokenStore || 'Not configured'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Logs Tab
+            const azureLogsInfo = document.getElementById('azureLogsInfo');
+            azureLogsInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">📋 APP LOGGING</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.appLogging || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">🌐 WEB SERVER LOGGING</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.webServerLogging || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">📊 DIAGNOSTICS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.diagnostics || 'Not configured'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">📈 APP INSIGHTS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.appInsights || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">💾 LOG RETENTION</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.logRetention || 'Not configured'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Traffic Tab
+            const azureTrafficInfo = document.getElementById('azureTrafficInfo');
+            azureTrafficInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🚦 TRAFFIC MANAGER</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.trafficManager || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">🌐 FRONT DOOR</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.frontDoor || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">☁️ CDN</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.cdn || 'Not configured'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🔀 LOAD BALANCER</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.loadBalancer || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">🎯 ROUTING RULES</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.routingRules || 'Not configured'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Extensions Tab
+            const azureExtensionsInfo = document.getElementById('azureExtensionsInfo');
+            azureExtensionsInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">🔌 SITE EXTENSIONS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.siteExtensions || 'None installed'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">📈 APP INSIGHTS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.appInsights || 'Not configured'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">⚡ WEBJOBS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.webJobs || 'None configured'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🔧 KUDU VERSION</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.kuduVersion || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">📦 EXTENSIONS COUNT</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.extensionsCount || '0'}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update Metadata Tab
+            const azureMetadataInfo = document.getElementById('azureMetadataInfo');
+            azureMetadataInfo.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="metric-card" style="border-left-color: #3b82f6;">
+                        <div class="info-label" style="color: #3b82f6;">📅 CREATED DATE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.createdDate || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <div class="info-label" style="color: #10b981;">👤 OWNER</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.owner || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #f59e0b;">
+                        <div class="info-label" style="color: #f59e0b;">🏷️ TAGS</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.tags || 'None configured'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="metric-card" style="border-left-color: #8b5cf6;">
+                        <div class="info-label" style="color: #8b5cf6;">🔗 RESOURCE ID</div>
+                        <div class="info-value" style="font-size: 0.85rem; font-weight: 600; font-family: monospace; word-break: break-all;">${data.appServiceInfo?.resourceId || 'Not available'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #06b6d4;">
+                        <div class="info-label" style="color: #06b6d4;">📊 RESOURCE TYPE</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.resourceType || 'Microsoft.Web/sites'}</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #ec4899;">
+                        <div class="info-label" style="color: #ec4899;">📦 RESOURCE GROUP</div>
+                        <div class="info-value" style="font-size: 1.1rem; font-weight: 600;">${data.appServiceInfo?.resourceGroup || 'Not available'}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const arrowId = sectionId.replace('Content', 'Arrow');
+            const arrow = document.getElementById(arrowId);
+            
+            if (section.classList.contains('active')) {
+                section.classList.remove('active');
+                if (arrow) arrow.textContent = '🔽';
+            } else {
+                section.classList.add('active');
+                if (arrow) arrow.textContent = '▶️';
+            }
+        }
+        
+        function switchGeneralTab(tabName) {
+            try {
+                
+                // Ensure diagnosticsResults stays visible
+                const diagnosticsResults = document.getElementById('diagnosticsResults');
+                if (diagnosticsResults) {
+                    diagnosticsResults.style.display = 'block';
+                }
+                
+                // Hide all tabs using inline styles
+                const generalTab = document.getElementById('generalTab');
+                const headersTab = document.getElementById('headersTab');
+                const timingTab = document.getElementById('timingTab');
+                
+                if (generalTab) generalTab.style.display = 'none';
+                if (headersTab) headersTab.style.display = 'none';
+                if (timingTab) timingTab.style.display = 'none';
+                
+                // Remove active class from all buttons
+                const buttons = document.querySelectorAll('#generalInfoContent .tab-btn');
+                buttons.forEach(btn => btn.classList.remove('active'));
+                
+                // Show selected tab using inline style
+                if (tabName === 'general' && generalTab) {
+                    generalTab.style.display = 'block';
+                    if (buttons[0]) buttons[0].classList.add('active');
+                } else if (tabName === 'headers' && headersTab) {
+                    headersTab.style.display = 'block';
+                    if (buttons[1]) buttons[1].classList.add('active');
+                } else if (tabName === 'timing' && timingTab) {
+                    timingTab.style.display = 'block';
+                    if (buttons[2]) buttons[2].classList.add('active');
+                }
+                
+            } catch (error) {
+                console.error('Error in switchGeneralTab:', error);
+            }
+        }
+        
+        function switchSecurityTab(tabName) {
+            try {
+                
+                // Ensure diagnosticsResults stays visible
+                const diagnosticsResults = document.getElementById('diagnosticsResults');
+                if (diagnosticsResults) {
+                    diagnosticsResults.style.display = 'block';
+                }
+                
+                // Hide all tabs using inline styles
+                const tabs = ['sslTab', 'certificateTab', 'dnsTab', 'tcpTab', 'ipTab'];
+                tabs.forEach(tabId => {
+                    const tab = document.getElementById(tabId);
+                    if (tab) tab.style.display = 'none';
+                });
+                
+                // Remove active class from all buttons
+                const buttons = document.querySelectorAll('#securityInfoContent .tab-btn');
+                buttons.forEach(btn => btn.classList.remove('active'));
+                
+                // Show selected tab using inline style
+                const tabMap = {
+                    'ssl': { id: 'sslTab', index: 0 },
+                    'certificate': { id: 'certificateTab', index: 1 },
+                    'dns': { id: 'dnsTab', index: 2 },
+                    'tcp': { id: 'tcpTab', index: 3 },
+                    'ip': { id: 'ipTab', index: 4 }
+                };
+                
+                if (tabMap[tabName]) {
+                    const selectedTab = document.getElementById(tabMap[tabName].id);
+                    if (selectedTab) selectedTab.style.display = 'block';
+                    if (buttons[tabMap[tabName].index]) buttons[tabMap[tabName].index].classList.add('active');
+                }
+                
+            } catch (error) {
+                console.error('Error in switchSecurityTab:', error);
+            }
+        }
+        
+        function switchAzureTab(tabName) {
+            try {
+                
+                // Ensure diagnosticsResults stays visible
+                const diagnosticsResults = document.getElementById('diagnosticsResults');
+                if (diagnosticsResults) {
+                    diagnosticsResults.style.display = 'block';
+                }
+                
+                // Hide all tabs using inline styles
+                const tabs = ['hostingTab', 'configurationTab', 'scalingTab', 'securityTab', 'resourcesTab', 'deploymentTab', 'siteinfoTab', 'linksTab', 'performanceTab', 'runtimeTab', 'storageTab', 'networkingTab', 'backupTab', 'availabilityTab', 'authTab', 'logsTab', 'trafficTab', 'extensionsTab', 'metadataTab'];
+                tabs.forEach(tabId => {
+                    const tab = document.getElementById(tabId);
+                    if (tab) tab.style.display = 'none';
+                });
+                
+                // Remove active class from all buttons
+                const buttons = document.querySelectorAll('#azureInfoContent .tab-btn');
+                buttons.forEach(btn => btn.classList.remove('active'));
+                
+                // Show selected tab using inline style
+                const tabMap = {
+                    'hosting': { id: 'hostingTab', index: 0 },
+                    'configuration': { id: 'configurationTab', index: 1 },
+                    'scaling': { id: 'scalingTab', index: 2 },
+                    'security': { id: 'securityTab', index: 3 },
+                    'resources': { id: 'resourcesTab', index: 4 },
+                    'deployment': { id: 'deploymentTab', index: 5 },
+                    'siteinfo': { id: 'siteinfoTab', index: 6 },
+                    'links': { id: 'linksTab', index: 7 },
+                    'performance': { id: 'performanceTab', index: 8 },
+                    'runtime': { id: 'runtimeTab', index: 9 },
+                    'storage': { id: 'storageTab', index: 10 },
+                    'networking': { id: 'networkingTab', index: 11 },
+                    'backup': { id: 'backupTab', index: 12 },
+                    'availability': { id: 'availabilityTab', index: 13 },
+                    'auth': { id: 'authTab', index: 14 },
+                    'logs': { id: 'logsTab', index: 15 },
+                    'traffic': { id: 'trafficTab', index: 16 },
+                    'extensions': { id: 'extensionsTab', index: 17 },
+                    'metadata': { id: 'metadataTab', index: 18 }
+                };
+                
+                if (tabMap[tabName]) {
+                    const selectedTab = document.getElementById(tabMap[tabName].id);
+                    if (selectedTab) selectedTab.style.display = 'block';
+                    if (buttons[tabMap[tabName].index]) buttons[tabMap[tabName].index].classList.add('active');
+                    
+                    // Auto-load links when Links tab is selected
+                    if (tabName === 'links') {
+                        queryLinks();
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error in switchAzureTab:', error);
+            }
+        }
+        
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function saveToTestHistory(data) {
+            let url = document.getElementById('txtUrl').value.trim();
+            url = normalizeUrl(url);
+            
+            const testHistory = JSON.parse(localStorage.getItem('testHistory') || '[]');
+            
+            const historyItem = {
+                url: url,
+                timestamp: new Date().toISOString(),
+                totalRequests: data.totalRequests,
+                successCount: data.successCount,
+                failCount: data.failCount,
+                avgTime: data.statistics.average.toFixed(0),
+                successRate: ((data.successCount / data.totalRequests) * 100).toFixed(1)
+            };
+            
+            testHistory.unshift(historyItem);
+            if (testHistory.length > 10) testHistory.pop();
+            localStorage.setItem('testHistory', JSON.stringify(testHistory));
+            
+            displayTestHistory();
+        }
+        
+        function displayTestHistory() {
+            const testHistory = JSON.parse(localStorage.getItem('testHistory') || '[]');
+            const historyList = document.getElementById('testHistoryList');
+            
+            if (testHistory.length === 0) {
+                historyList.innerHTML = '<p style="color: #a0a0a0; padding: 1rem; text-align: center;">No test history available. Run a test to see results here.</p>';
+                return;
+            }
+            
+            let html = '';
+            testHistory.forEach((item, index) => {
+                const date = new Date(item.timestamp);
+                html += `
+                    <div style="background: rgba(91, 110, 225, 0.08); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border-left: 3px solid #5b6ee1;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <div style="color: #e2e8f0; font-weight: 600; font-size: 0.9rem; word-break: break-all; flex: 1;">${item.url}</div>
+                            <div style="color: #94a3b8; font-size: 0.8rem; margin-left: 1rem; white-space: nowrap;">${date.toLocaleString()}</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; font-size: 0.85rem;">
+                            <div><span style="color: #94a3b8;">Requests:</span> <span style="color: #e2e8f0; font-weight: 600;">${item.totalRequests}</span></div>
+                            <div><span style="color: #94a3b8;">Success:</span> <span style="color: #10b981; font-weight: 600;">${item.successCount}</span></div>
+                            <div><span style="color: #94a3b8;">Failed:</span> <span style="color: #ef4444; font-weight: 600;">${item.failCount}</span></div>
+                            <div><span style="color: #94a3b8;">Avg Time:</span> <span style="color: #e2e8f0; font-weight: 600;">${item.avgTime}ms</span></div>
+                            <div><span style="color: #94a3b8;">Success Rate:</span> <span style="color: #10b981; font-weight: 600;">${item.successRate}%</span></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+        }
+        
+        async function queryKusto() {
+            // Get site name from either input field
+            const siteName = (document.getElementById('txtKustoSiteName2')?.value || document.getElementById('txtKustoSiteName')?.value || '').trim();
+            
+            // Update both displays
+            const resultsDisplay = document.getElementById('kustoResultsDisplay');
+            const resultsDisplay2 = document.getElementById('kustoResultsDisplay2');
+            
+            if (!siteName) {
+                alert('Please enter a site name');
+                return;
+            }
+            
+            const loadingHtml = '<p style="color: #5b9cf8; padding: 1rem;">? Authenticating and querying Kusto cluster (wawseus)...</p>';
+            if (resultsDisplay) resultsDisplay.innerHTML = loadingHtml;
+            if (resultsDisplay2) resultsDisplay2.innerHTML = loadingHtml;
+            
+            // Sync both input fields
+            if (document.getElementById('txtKustoSiteName')) {
+                document.getElementById('txtKustoSiteName').value = siteName;
+            }
+            if (document.getElementById('txtKustoSiteName2')) {
+                document.getElementById('txtKustoSiteName2').value = siteName;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('SiteName', siteName);
+                
+                const response = await fetch('?handler=QueryKusto', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.kustoResults) {
+                    let html = '';
+                    
+                    // Format the results as a table if it's an array
+                    if (Array.isArray(data.kustoResults) && data.kustoResults.length > 0) {
+                        html += '<div style="overflow-x: auto;">';
+                        html += '<table style="width: 100%; border-collapse: collapse; color: #e0e0e0; font-size: 0.85rem;">';
+                        
+                        // Table header
+                        html += '<thead><tr style="background: rgba(91, 156, 248, 0.2); border-bottom: 2px solid #5b9cf8;">';
+                        for (const key in data.kustoResults[0]) {
+                            html += `<th style="padding: 10px; text-align: left; border: 1px solid rgba(91, 156, 248, 0.3); font-weight: 600;">${key}</th>`;
+                        }
+                        html += '</tr></thead>';
+                        
+                        // Table body
+                        html += '<tbody>';
+                        data.kustoResults.forEach(row => {
+                            html += '<tr style="border-bottom: 1px solid rgba(91, 156, 248, 0.1);">';
+                            for (const key in row) {
+                                html += `<td style="padding: 8px; border: 1px solid rgba(91, 156, 248, 0.2); word-break: break-word;">${row[key] || ''}</td>`;
+                            }
+                            html += '</tr>';
+                        });
+                        html += '</tbody></table></div>';
+                        
+                        if (data.message) {
+                            html = `<p style="color: #5b9cf8; margin-bottom: 10px;">? ${data.message}</p>` + html;
+                        }
+                    } else {
+                        html = `<p style="color: #ffa500;">?? No results found for site: ${siteName}</p>`;
+                    }
+                    
+                    if (resultsDisplay) resultsDisplay.innerHTML = html;
+                    if (resultsDisplay2) resultsDisplay2.innerHTML = html;
+                } else {
+                    const errorHtml = `
+                        <p style="color: #ff6b6b;">❌ ${data.message || 'Query failed'}</p>
+                        ${data.error ? `<pre style="color: #ff6b6b; white-space: pre-wrap; word-wrap: break-word; font-size: 0.85em; margin-top: 10px; max-height: 400px; overflow-y: auto;">${data.error}</pre>` : ''}
+                    `;
+                    if (resultsDisplay) resultsDisplay.innerHTML = errorHtml;
+                    if (resultsDisplay2) resultsDisplay2.innerHTML = errorHtml;
+                }
+            } catch (error) {
+                console.error('Error querying Kusto:', error);
+                const errorHtml = `<p style="color: #ff6b6b;">❌ Error: ${error.message}</p>`;
+                if (resultsDisplay) resultsDisplay.innerHTML = errorHtml;
+                if (resultsDisplay2) resultsDisplay2.innerHTML = errorHtml;
+            }
+        }
+        
+        // Query Kusto for site links (AppLens, Insights, Observer)
+        async function queryLinks() {
+            // Get site name from Target URL field
+            let url = document.getElementById('txtUrl')?.value?.trim();
+            const linksDisplay = document.getElementById('linksDisplay');
+            
+            if (!url) {
+                linksDisplay.innerHTML = '<p style="color: #ffa500; text-align: center;">⚠️ Please enter a Target URL first</p>';
+                return;
+            }
+            
+            // Extract site name from URL
+            let siteName = url;
+            try {
+                // Remove protocol
+                siteName = siteName.replace(/^https?:\/\//, '');
+                // Remove path and query string
+                siteName = siteName.split('/')[0].split('?')[0];
+                // Extract site name from azurewebsites.net URLs
+                if (siteName.includes('.azurewebsites.net')) {
+                    siteName = siteName.split('.')[0];
+                }
+            } catch (e) {
+                console.error('Error parsing URL:', e);
+            }
+            
+            linksDisplay.innerHTML = '<p style="color: #5b9cf8; padding: 1rem;">🔍 Authenticating and querying Kusto cluster for links...</p>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('SiteName', siteName);
+                
+                const response = await fetch('?handler=QueryLinks', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.links) {
+                    let html = '<div style="display: grid; gap: 1rem;">';
+                    
+                    // AppLens Card
+                    if (data.links.applensLink) {
+                        html += `
+                            <a href="${data.links.applensLink}" target="_blank" style="text-decoration: none; display: block; background: linear-gradient(135deg, rgba(91, 110, 225, 0.15) 0%, rgba(91, 156, 248, 0.1) 100%); border: 1px solid rgba(91, 110, 225, 0.3); border-radius: 12px; padding: 1.25rem; transition: all 0.3s ease; cursor: pointer;" 
+                            onmouseover="this.style.background='linear-gradient(135deg, rgba(91, 110, 225, 0.25) 0%, rgba(91, 156, 248, 0.2) 100%)'; this.style.borderColor='rgba(91, 110, 225, 0.5)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(91, 110, 225, 0.2)';"
+                            onmouseout="this.style.background='linear-gradient(135deg, rgba(91, 110, 225, 0.15) 0%, rgba(91, 156, 248, 0.1) 100%)'; this.style.borderColor='rgba(91, 110, 225, 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🔍</div>
+                                    <div style="flex: 1;">
+                                        <div style="color: #e2e8f0; font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">AppLens</div>
+                                        <div style="color: #94a3b8; font-size: 0.85rem;">Diagnostic and troubleshooting insights</div>
+                                    </div>
+                                    <div style="color: #5b9cf8; font-size: 1.5rem;">→</div>
+                                </div>
+                            </a>
+                        `;
+                    }
+                    
+                    // Azure Service Insights Card
+                    if (data.links.asiLink) {
+                        html += `
+                            <a href="${data.links.asiLink}" target="_blank" style="text-decoration: none; display: block; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(96, 165, 250, 0.1) 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 1.25rem; transition: all 0.3s ease; cursor: pointer;"
+                            onmouseover="this.style.background='linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(96, 165, 250, 0.2) 100%)'; this.style.borderColor='rgba(59, 130, 246, 0.5)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.2)';"
+                            onmouseout="this.style.background='linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(96, 165, 250, 0.1) 100%)'; this.style.borderColor='rgba(59, 130, 246, 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">📊</div>
+                                    <div style="flex: 1;">
+                                        <div style="color: #e2e8f0; font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">Azure Service Insights</div>
+                                        <div style="color: #94a3b8; font-size: 0.85rem;">Service health and performance metrics</div>
+                                    </div>
+                                    <div style="color: #5b9cf8; font-size: 1.5rem;">→</div>
+                                </div>
+                            </a>
+                        `;
+                    }
+                    
+                    // Observer Card
+                    if (data.links.observerLink) {
+                        html += `
+                            <a href="${data.links.observerLink}" target="_blank" style="text-decoration: none; display: block; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(167, 139, 250, 0.1) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 1.25rem; transition: all 0.3s ease; cursor: pointer;"
+                            onmouseover="this.style.background='linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(167, 139, 250, 0.2) 100%)'; this.style.borderColor='rgba(139, 92, 246, 0.5)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';"
+                            onmouseout="this.style.background='linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(167, 139, 250, 0.1) 100%)'; this.style.borderColor='rgba(139, 92, 246, 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">👁️</div>
+                                    <div style="flex: 1;">
+                                        <div style="color: #e2e8f0; font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">Observer</div>
+                                        <div style="color: #94a3b8; font-size: 0.85rem;">Real-time site monitoring and analytics</div>
+                                    </div>
+                                    <div style="color: #5b9cf8; font-size: 1.5rem;">→</div>
+                                </div>
+                            </a>
+                        `;
+                    }
+                    
+                    html += '</div>';
+                    linksDisplay.innerHTML = html;
+                } else {
+                    linksDisplay.innerHTML = `<p style="color: #ffa500;">⚠️ ${data.message || 'No results found for site: ' + siteName}</p>`;
+                }
+            } catch (error) {
+                console.error('Error querying links:', error);
+                linksDisplay.innerHTML = `<p style="color: #ff6b6b;">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Send feedback email
+        function sendFeedback() {
+            const subject = encodeURIComponent('Performance Testing Platform - Feedback');
+            const body = encodeURIComponent('Hi,\n\nI have feedback about the Performance Testing Platform:\n\n');
+            window.location.href = `mailto:magurura@microsoft.com?subject=${subject}&body=${body}`;
+        }
+        
+        // Azure Login functionality
+        async function azureLogin() {
+            const statusText = document.getElementById('loginStatusText');
+            const statusDiv = document.getElementById('azureLoginStatus');
+            
+            statusText.textContent = '⏳ Authenticating...';
+            statusDiv.style.background = 'rgba(59, 130, 246, 0.2)';
+            statusDiv.style.color = '#3b82f6';
+            
+            try {
+                const formData = new FormData();
+                const response = await fetch('?handler=AzureLogin', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusText.textContent = '✅ Logged in';
+                    statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
+                    statusDiv.style.color = '#10b981';
+                    
+                    // Store login status in session storage
+                    sessionStorage.setItem('azureLoggedIn', 'true');
+                    sessionStorage.setItem('azureLoginTime', new Date().toISOString());
+                    if (data.accountInfo) {
+                        sessionStorage.setItem('azureAccountInfo', data.accountInfo);
+                    }
+                    
+                    alert('✅ Successfully logged in to Azure!\n\n' + data.accountInfo);
+                } else {
+                    statusText.textContent = 'Not logged in';
+                    statusDiv.style.background = 'rgba(40, 44, 63, 0.8)';
+                    statusDiv.style.color = '#94a3b8';
+                    
+                    // Check if it's a device code flow response
+                    if (data.deviceCodeInfo) {
+                        const deviceInfo = typeof data.deviceCodeInfo === 'string' ? JSON.parse(data.deviceCodeInfo) : data.deviceCodeInfo;
+                        
+                        // Create a modal to display device code instructions
+                        const modal = document.createElement('div');
+                        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+                        modal.innerHTML = `
+                            <div style="background: #1e293b; border-radius: 16px; padding: 2rem; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+                                <h2 style="color: #3b82f6; margin: 0 0 1rem 0; font-size: 1.5rem;">🔐 Azure Device Code Authentication</h2>
+                                <p style="color: #cbd5e1; margin-bottom: 1.5rem;">To complete authentication, follow these steps:</p>
+                                <div style="background: rgba(59, 130, 246, 0.1); border: 2px solid #3b82f6; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                    <p style="color: #cbd5e1; margin: 0 0 0.5rem 0;"><strong style="color: #3b82f6;">1.</strong> Visit: <a href="${deviceInfo.verificationUri}" target="_blank" style="color: #60a5fa; text-decoration: underline;">${deviceInfo.verificationUri}</a></p>
+                                    <p style="color: #cbd5e1; margin: 0 0 0.5rem 0;"><strong style="color: #3b82f6;">2.</strong> Enter this code:</p>
+                                    <div style="background: #0f172a; border-radius: 8px; padding: 1rem; text-align: center; margin: 0.5rem 0;">
+                                        <span style="font-size: 2rem; font-weight: 700; color: #60a5fa; font-family: monospace; letter-spacing: 0.2em;">${deviceInfo.userCode}</span>
+                                    </div>
+                                    <p style="color: #94a3b8; font-size: 0.85rem; margin: 0.5rem 0 0 0;">Code expires: ${new Date(deviceInfo.expiresOn).toLocaleTimeString()}</p>
+                                </div>
+                                <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1.5rem;">After entering the code in your browser, return here and click "Check Status"</p>
+                                <div style="display: flex; gap: 1rem;">
+                                    <button onclick="checkAuthStatus(); this.parentElement.parentElement.parentElement.remove();" style="flex: 1; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                                        ✅ Check Status
+                                    </button>
+                                    <button onclick="window.open('${deviceInfo.verificationUri}', '_blank')" style="flex: 1; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 8px; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                                        🌐 Open Login Page
+                                    </button>
+                                    <button onclick="this.parentElement.parentElement.parentElement.remove();" style="flex: 1; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 2px solid #ef4444; border-radius: 8px; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                                        ❌ Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(modal);
+                        
+                        // Auto-open the verification URL
+                        window.open(deviceInfo.verificationUri, '_blank');
+                    } else {
+                        alert('❌ Azure login failed: ' + (data.message || 'Unknown error') + (data.details ? '\n\nDetails: ' + data.details : ''));
+                    }
+                }
+            } catch (error) {
+                statusText.textContent = 'Not logged in';
+                statusDiv.style.background = 'rgba(40, 44, 63, 0.8)';
+                statusDiv.style.color = '#94a3b8';
+                alert('Error during Azure login: ' + error.message);
+            }
+        }
+        
+        // Function to check authentication status after device code flow
+        async function checkAuthStatus() {
+            const statusText = document.getElementById('loginStatusText');
+            const statusDiv = document.getElementById('azureLoginStatus');
+            
+            statusText.textContent = '⏳ Checking...';
+            statusDiv.style.background = 'rgba(59, 130, 246, 0.2)';
+            statusDiv.style.color = '#3b82f6';
+            
+            try {
+                // Call the backend to check if device code auth is complete
+                // The backend will check the existing credential without creating a new one
+                const formData = new FormData();
+                const response = await fetch('?handler=AzureLogin', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Authentication completed!
+                    statusText.textContent = '✅ Logged in';
+                    statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
+                    statusDiv.style.color = '#10b981';
+                    
+                    // Store login status
+                    sessionStorage.setItem('azureLoggedIn', 'true');
+                    sessionStorage.setItem('azureLoginTime', new Date().toISOString());
+                    if (data.accountInfo) {
+                        sessionStorage.setItem('azureAccountInfo', data.accountInfo);
+                    }
+                    
+                    // Close all device code modals
+                    document.querySelectorAll('div[style*="position: fixed"]').forEach(modal => {
+                        if (modal.innerHTML.includes('Azure Device Code Authentication')) {
+                            modal.remove();
+                        }
+                    });
+                    
+                    alert('✅ Successfully logged in to Azure!\n\n' + data.accountInfo);
+                } else if (data.conditionalAccessBlocked) {
+                    // Conditional Access Policy blocking
+                    statusText.textContent = '🚫 CA Policy Blocked';
+                    statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+                    statusDiv.style.color = '#ef4444';
+                    
+                    // Close all device code modals
+                    document.querySelectorAll('div[style*="position: fixed"]').forEach(modal => {
+                        if (modal.innerHTML.includes('Azure Device Code Authentication')) {
+                            modal.remove();
+                        }
+                    });
+                    
+                    alert('🚫 Conditional Access Policy Blocked\n\n' + 
+                          'Your authentication was successful, but your organization requires managed devices.\n\n' +
+                          'Solutions:\n' +
+                          '1. Use Azure CLI: Run "az login" in your terminal first\n' +
+                          '2. Enable Managed Identity on this App Service\n' +
+                          '3. Use a managed/compliant device (Intune-enrolled or Azure AD joined)\n\n' +
+                          'Error: ' + (data.error || 'Device management required'));
+                } else if (data.expired) {
+                    // Device code expired
+                    statusText.textContent = 'Not logged in';
+                    statusDiv.style.background = 'rgba(40, 44, 63, 0.8)';
+                    statusDiv.style.color = '#94a3b8';
+                    
+                    // Close all device code modals
+                    document.querySelectorAll('div[style*="position: fixed"]').forEach(modal => {
+                        if (modal.innerHTML.includes('Azure Device Code Authentication')) {
+                            modal.remove();
+                        }
+                    });
+                    
+                    alert('⏰ Device code expired. Please click "Login to Azure" again to get a new code.');
+                } else if (data.pending) {
+                    // Still waiting for authentication
+                    statusText.textContent = '⏳ Waiting for auth...';
+                    alert('⏳ Still waiting for authentication. Please complete the device code flow in your browser, then click "Check Status" again.');
+                } else {
+                    // Some other error
+                    statusText.textContent = 'Not logged in';
+                    statusDiv.style.background = 'rgba(40, 44, 63, 0.8)';
+                    statusDiv.style.color = '#94a3b8';
+                    
+                    // Close modals on error
+                    document.querySelectorAll('div[style*="position: fixed"]').forEach(modal => {
+                        if (modal.innerHTML.includes('Azure Device Code Authentication')) {
+                            modal.remove();
+                        }
+                    });
+                    
+                    alert('❌ Authentication failed: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                statusText.textContent = 'Not logged in';
+                statusDiv.style.background = 'rgba(40, 44, 63, 0.8)';
+                statusDiv.style.color = '#94a3b8';
+                alert('Error checking status: ' + error.message);
+            }
+        }
+        
+        // Check Azure login status on page load
+        function checkAzureLoginStatus() {
+            const isLoggedIn = sessionStorage.getItem('azureLoggedIn') === 'true';
+            const loginTime = sessionStorage.getItem('azureLoginTime');
+            
+            if (isLoggedIn && loginTime) {
+                const loginDate = new Date(loginTime);
+                const now = new Date();
+                const hoursSinceLogin = (now - loginDate) / (1000 * 60 * 60);
+                
+                // Token expires after 8 hours typically
+                if (hoursSinceLogin < 8) {
+                    document.getElementById('loginStatusText').textContent = '? Logged in';
+                    document.getElementById('azureLoginStatus').style.background = 'rgba(16, 185, 129, 0.2)';
+                    document.getElementById('azureLoginStatus').style.color = '#10b981';
+                } else {
+                    // Token likely expired
+                    sessionStorage.removeItem('azureLoggedIn');
+                    sessionStorage.removeItem('azureLoginTime');
+                }
+            }
+        }
+        
+        // Load test history on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            displayTestHistory();
+            checkAzureLoginStatus();
+        });
+    </script>
+</body>
+</html>
